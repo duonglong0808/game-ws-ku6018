@@ -64,7 +64,7 @@ export class EventService {
     const clineInfo = this.getClientInfo(client);
     const access_token = clineInfo.token;
     const dataUser = this.parseJwt(access_token);
-    const userId = dataUser.username;
+    const userId = dataUser.id;
     if (!userId) {
       // Ping data user
       client.emit(
