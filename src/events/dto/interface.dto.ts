@@ -15,13 +15,23 @@ export class DataSendMessage {
   timeSend: Date;
 }
 
-export interface UpdateStatusGameDto {
+export interface UpdateStatusGameDiceDto {
   gameDiceId: number;
   diceDetailId: number;
   transaction: number;
   mainTransaction: number;
   status: number | string;
   totalRed?: number;
+}
+
+export interface UpdateStatusGameBaccaratDto {
+  gameBaccaratId: number;
+  baccaratDetailId: number;
+  transaction: number;
+  mainTransaction: string;
+  status: number | string;
+  pokerBanker?: string;
+  pokerPlayer?: string;
 }
 
 export interface UpdatePointDto {

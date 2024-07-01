@@ -3,7 +3,7 @@ import { BeforeApplicationShutdown } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 import { Server, Socket } from 'socket.io';
 import { EventService } from './event.service';
-import { DataJoinRoom, DataSendMessage, DataSendUpdatePointDto, UpdatePointDto, UpdateStatusGameDto } from './dto/interface.dto';
+import { DataJoinRoom, DataSendMessage, DataSendUpdatePointDto, UpdatePointDto, UpdateStatusGameBaccaratDto, UpdateStatusGameDiceDto } from './dto/interface.dto';
 import { TypeEmitMessage } from 'src/constants';
 
 @WebSocketGateway({
@@ -48,10 +48,21 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     return this.eventService.handleJoinRoom(data, client);
   }
 
-  updateStatusGameDice(dto: UpdateStatusGameDto) {
+  updateStatusGameDice(dto: UpdateStatusGameDiceDto) {
     const dataRes = this.bufferObject({
       typeEmit: TypeEmitMessage.updateStatusDice,
       ...dto,
+    });
+
+    this.server.emit('data', dataRes);
+  }
+
+  updateStatusGameBaccarat(dto: UpdateStatusGameBaccaratDto) {
+    const dataRes = this.bufferObject({
+      typeEmit: TypeEmitMessage.updateStatusBaccarat,
+      ...dto,
+      pokerBanker: dto.pokerBanker ? dto.pokerBanker.split(',') : '',
+      pokerPlayer: dto.pokerPlayer ? dto.pokerPlayer.split(',') : '',
     });
 
     this.server.emit('data', dataRes);
