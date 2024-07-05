@@ -38,6 +38,7 @@ export interface UpdatePointDto {
   userId: number;
   type: number;
   points: number;
+  pointBetMain: number;
 }
 
 export interface DataSendUpdatePointDto {
