@@ -5,6 +5,7 @@ import { Server, Socket } from 'socket.io';
 import { EventService } from './event.service';
 import { DataJoinRoom, DataSendMessage, DataSendUpdatePointDto, UpdatePointDto, UpdateStatusGameBaccaratDto, UpdateStatusGameDiceDto } from './dto/interface.dto';
 import { TypeEmitMessage } from 'src/constants';
+import { mockMessages, mockNames } from 'src/mocks';
 
 @WebSocketGateway({
   allowEIO3: true,
@@ -43,6 +44,23 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     console.log('WebSocket Gateway initialized');
   }
 
+  onModuleInit() {
+    setInterval(() => {
+      this.sendRandomMessage();
+    }, 2000); // Gửi tin nhắn ngẫu nhiên mỗi 2 giây
+  }
+
+  sendRandomMessage() {
+    if (Math.random() > 0.5) {
+      const date = new Date();
+      const randomName = mockNames[Math.floor(Math.random() * mockNames.length)];
+      const randomMessage = mockMessages[Math.floor(Math.random() * mockMessages.length)];
+
+      const dataEmit = { sender: randomName, group: 'dice', content: randomMessage, typeEmit: TypeEmitMessage.NewMessage, timeSend: `${date.getHours()}:${date.getMinutes()}` };
+      this.server.emit('data', this.bufferObject(dataEmit));
+    }
+  }
+
   @SubscribeMessage('join-room')
   joinRoom(@MessageBody() data: DataJoinRoom, @ConnectedSocket() client: Socket) {
     return this.eventService.handleJoinRoom(data, client);
@@ -55,6 +73,11 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
     });
 
     this.server.emit('data', dataRes);
+  }
+
+  @SubscribeMessage('send-message')
+  sendMessage(@MessageBody() data: DataSendMessage, @ConnectedSocket() client: Socket, server: Server) {
+    return this.eventService.handleSendMessage(data, client, this.server);
   }
 
   updateStatusGameBaccarat(dto: UpdateStatusGameBaccaratDto) {

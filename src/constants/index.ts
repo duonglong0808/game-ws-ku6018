@@ -3,6 +3,7 @@ export const TypeEmitMessage = {
   updateStatusDice: 1,
   updatePoint: 2,
   updateStatusBaccarat: 3,
+  NewMessage: 4,
 };
 
 export const TypeUpdatePointUser = {

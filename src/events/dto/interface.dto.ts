@@ -9,10 +9,10 @@ export class DataToken {
 
 export class DataSendMessage {
   group: string;
-  files: string[];
   content: string;
-  typeMessage: string;
+  // typeMessage: string;
   timeSend: Date;
+  username: string;
 }
 
 export interface UpdateStatusGameDiceDto {

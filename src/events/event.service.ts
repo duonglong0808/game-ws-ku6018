@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConnectedSocket, MessageBody } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { JwtService } from '@nestjs/jwt';
-import { DataJoinRoom, DataToken } from './dto/interface.dto';
+import { DataJoinRoom, DataSendMessage, DataToken } from './dto/interface.dto';
 import { RedisService } from 'src/cache/redis.service';
 import { TypeEmitMessage } from 'src/constants';
 
@@ -116,5 +116,20 @@ export class EventService {
     // Ping data user
     client.join(roomName);
     return client.emit('data', dataRes);
+  }
+
+  async handleSendMessage(dto: DataSendMessage, client: Socket, server: Server) {
+    if (!dto.username) {
+      // Ping data user
+      client.emit(
+        'data',
+        this.bufferObject({
+          error: 'Token expired',
+        }),
+      );
+      return;
+    }
+    const dataEmit = { ...dto, typeEmit: TypeEmitMessage.NewMessage, sender: dto.username, timeSend: dto.timeSend };
+    server.emit('data', this.bufferObject(dataEmit));
   }
 }
