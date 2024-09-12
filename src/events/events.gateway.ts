@@ -5,7 +5,7 @@ import { Server, Socket } from 'socket.io';
 import { EventService } from './event.service';
 import { DataJoinRoom, DataSendMessage, DataSendUpdatePointDto, UpdatePointDto, UpdateStatusGameBaccaratDto, UpdateStatusGameDiceDto } from './dto/interface.dto';
 import { TypeEmitMessage } from 'src/constants';
-import { mockMessages, mockNames } from 'src/mocks';
+import { mockMessages, mockMessagesBaccarat, mockNames } from 'src/mocks';
 
 @WebSocketGateway({
   allowEIO3: true,
@@ -55,8 +55,10 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
       const date = new Date();
       const randomName = mockNames[Math.floor(Math.random() * mockNames.length)];
       const randomMessage = mockMessages[Math.floor(Math.random() * mockMessages.length)];
+      const randomMessageBaccarat = mockMessagesBaccarat[Math.floor(Math.random() * mockMessages.length)];
 
-      const dataEmit = { sender: randomName, group: 'dice', content: randomMessage, typeEmit: TypeEmitMessage.NewMessage, timeSend: `${date.getHours()}:${date.getMinutes()}` };
+      const sendBaccarat = Math.random() > 0.5;
+      const dataEmit = { sender: randomName, group: sendBaccarat ? 'baccarat' : 'dice', content: sendBaccarat ? randomMessageBaccarat : randomMessage, typeEmit: TypeEmitMessage.NewMessage, timeSend: `${date.getHours()}:${date.getMinutes()}` };
       this.server.emit('data', this.bufferObject(dataEmit));
     }
   }
